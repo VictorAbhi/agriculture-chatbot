@@ -1,4 +1,4 @@
-# Agriculture RAG System 🌱🤖
+# Agri-bot 🌱🤖
 
 A Retrieval-Augmented Generation (RAG) system for agricultural knowledge, focusing on crop diseases and treatments in the Indian subcontinent.
 
