@@ -6,8 +6,8 @@ A Retrieval-Augmented Generation (RAG) system for agricultural knowledge, focusi
 
 - **Disease Diagnosis**: Identify crop diseases from symptoms
 - **Treatment Recommendations**: Get both chemical and organic solutions
-- **Region-Specific Advice**: Tailored recommendations for Indian states
-- **Multilingual Support**: Works with English and Hindi queries
+- **Region-Specific Advice**: Tailored recommendations for Indian subcontinents.
+- **Multilingual Support**: Works with English queries ( will be trying to work with Nepali as well)
 
 ## Tech Stack
 
