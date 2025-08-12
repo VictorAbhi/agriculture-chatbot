@@ -1,513 +1,340 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriBot - AI Agriculture Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-light: #81C784;
+            --primary-dark: #388E3C;
+            --secondary: #2E7D32;
+            --light: #F1F8E9;
+            --dark: #1B5E20;
+            --gray: #757575;
+            --light-gray: #E0E0E0;
+            --white: #FFFFFF;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-
-        :root {
-            --primary: #2e7d32;
-            --primary-dark: #1b5e20;
-            --secondary: #ffb300;
-            --accent: #388e3c;
-            --light: #f1f8e9;
-            --dark: #1e3c21;
-            --gray: #78909c;
-            --white: #ffffff;
-        }
-
+        
         body {
-            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            background-color: #F5F5F5;
             min-height: 100vh;
+            color: #333;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            line-height: 1.6;
         }
-
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background-color: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        
+        .app-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
             overflow: hidden;
+            height: 90vh;
             display: flex;
             flex-direction: column;
-            height: 95vh;
         }
-
-        header {
-            background: linear-gradient(120deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 25px 30px;
+        
+        .stats-bar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 20px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
-
-        header::before {
-            content: "";
-            position: absolute;
-            top: -50px;
-            left: -50px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
+        
+        .stats-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
-
-        header::after {
-            content: "";
-            position: absolute;
-            bottom: -80px;
-            right: -50px;
-            width: 250px;
-            height: 250px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .tagline {
-            font-size: 1.1rem;
+        
+        .stats-subtitle {
+            font-size: 14px;
             opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto 20px;
+            margin-bottom: 20px;
         }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
             margin-top: 15px;
-            flex-wrap: wrap;
         }
-
-        .stat-box {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 20px;
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 10px;
-            text-align: center;
-            min-width: 120px;
+            padding: 12px;
+            backdrop-filter: blur(5px);
         }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
+        
+        .stat-number {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
-
+        
         .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 12px;
+            opacity: 0.9;
         }
-
-        main {
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            background-color: var(--white);
-        }
-
-        .chat-container {
-            flex-grow: 1;
+        
+        .chat-body {
+            flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background-color: var(--light);
-            border-radius: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            background: var(--white);
         }
-
-        .message {
-            max-width: 85%;
-            padding: 15px 20px;
+        
+        .message-container {
+            margin-bottom: 20px;
+        }
+        
+        .user-message {
+            text-align: right;
+        }
+        
+        .bot-message {
+            text-align: left;
+        }
+        
+        .message-bubble {
+            display: inline-block;
+            max-width: 80%;
+            padding: 12px 16px;
             border-radius: 18px;
-            line-height: 1.5;
+            margin-bottom: 5px;
             position: relative;
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn 0.3s ease;
         }
-
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        .user-message {
-            background-color: var(--secondary);
+        
+        .user-message .message-bubble {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            border-radius: 18px 18px 5px 18px;
+        }
+        
+        .bot-message .message-bubble {
+            background: var(--light);
             color: var(--dark);
-            align-self: flex-end;
-            border-bottom-right-radius: 5px;
+            border-radius: 18px 18px 18px 5px;
         }
-
-        .bot-message {
-            background-color: var(--accent);
-            color: white;
-            align-self: flex-start;
-            border-bottom-left-radius: 5px;
-        }
-
-        .bot-icon {
-            position: absolute;
-            left: -45px;
-            top: 0;
-            width: 35px;
-            height: 35px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-icon {
-            position: absolute;
-            right: -45px;
-            top: 0;
-            width: 35px;
-            height: 35px;
-            background: var(--secondary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .input-area {
-            display: flex;
-            gap: 15px;
-            padding-top: 10px;
-            border-top: 2px solid rgba(0, 0, 0, 0.05);
-        }
-
-        input {
-            flex-grow: 1;
-            padding: 16px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 50px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
-        }
-
-        button {
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 0 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
-        }
-
-        .examples {
-            margin-top: 20px;
-        }
-
-        .examples h3 {
-            color: var(--dark);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .example-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .example-tag {
-            background-color: rgba(56, 142, 60, 0.1);
-            color: var(--accent);
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .example-tag:hover {
-            background-color: rgba(56, 142, 60, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .sources {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #e8f5e9;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            color: var(--dark);
-            display: none;
-        }
-
-        .sources.visible {
-            display: block;
-        }
-
-        .sources-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .source-item {
-            margin-left: 20px;
-            margin-bottom: 5px;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: var(--light);
+        
+        .message-time {
+            font-size: 11px;
             color: var(--gray);
-            font-size: 0.9rem;
+            display: block;
+            margin-top: 5px;
         }
-
-        @media (max-width: 768px) {
-            .container {
+        
+        .input-container {
+            padding: 15px;
+            background: var(--white);
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .input-box {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid var(--light-gray);
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+        
+        .send-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .send-button:active {
+            transform: scale(0.98);
+        }
+        
+        .suggested-text {
+            text-align: center;
+            color: var(--gray);
+            font-size: 13px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        /* Scrollbar styling */
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .chat-body::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        .chat-body::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 500px) {
+            .app-container {
                 height: 100vh;
                 border-radius: 0;
+                max-width: 100%;
             }
             
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .stats {
-                gap: 10px;
-            }
-            
-            .stat-box {
-                min-width: 90px;
-                padding: 8px 12px;
-            }
-            
-            .stat-value {
-                font-size: 1.4rem;
-            }
-            
-            .message {
-                max-width: 80%;
-            }
-            
-            .bot-icon, .user-icon {
-                display: none;
+            .message-bubble {
+                max-width: 90%;
             }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <h1><i class="fas fa-seedling"></i> AgriBot AI Assistant</h1>
-                <p class="tagline">Your intelligent partner for crop disease diagnosis and management</p>
-                
-                <div class="stats">
-                    <div class="stat-box">
-                        <div class="stat-value">14+</div>
-                        <div class="stat-label">Crop Types</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value">120+</div>
-                        <div class="stat-label">Diseases</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value">24/7</div>
-                        <div class="stat-label">Support</div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        
-        <main>
-            <div class="chat-container" id="chatContainer">
-                <div class="message bot-message">
-                    <div class="bot-icon"><i class="fas fa-robot"></i></div>
-                    Hello! I'm AgriBot, your AI agriculture assistant. I can help you with crop disease identification, prevention methods, and treatment solutions. How can I assist you today?
-                </div>
-                
-                <div class="message bot-message">
-                    <div class="bot-icon"><i class="fas fa-robot"></i></div>
-                    Try asking about specific diseases like "What is damping-off in tomatoes?" or "How to manage chili anthracnose?"
-                </div>
-            </div>
-            
-            <form method="POST" id="queryForm">
-                <div class="input-area">
-                    <input type="text" name="query" placeholder="Ask about crop diseases (e.g., What is damping-off? How to treat tomato blight?)" required id="queryInput">
-                    <button type="submit"><i class="fas fa-paper-plane"></i> Ask</button>
-                </div>
-            </form>
-            
-            <div class="examples">
-                <h3><i class="fas fa-lightbulb"></i> Try these examples:</h3>
-                <div class="example-tags">
-                    <div class="example-tag" data-query="What causes damping-off in seedlings?">Damping-off</div>
-                    <div class="example-tag" data-query="How to identify and treat tomato late blight?">Tomato Blight</div>
-                    <div class="example-tag" data-query="What are symptoms of bacterial wilt in brinjal?">Brinjal Wilt</div>
-                    <div class="example-tag" data-query="Management techniques for chili anthracnose">Chili Anthracnose</div>
-                </div>
-            </div>
-            
-            <div class="sources" id="sourcesSection">
-                <div class="sources-title"><i class="fas fa-book"></i> Sources:</div>
-                <div class="source-list" id="sourceList"></div>
-            </div>
-        </main>
-        
-        <footer>
-            <p>Powered by AI Agriculture Assistant | Compendium of Vegetable Crops Diseases</p>
-            <p>© 2023 AgriBot - Your Farming Companion</p>
-        </footer>
-    </div>
 
+<body>
+    <div class="app-container">
+        <div class="stats-bar">
+            <div class="stats-title"><i class="fas fa-seedling"></i> AgriBot AI Assistant</div>
+            <div class="stats-subtitle">Your intelligent partner for crop disease diagnosis and management</div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">14+</div>
+                    <div class="stat-label">Crop Types</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">120+</div>
+                    <div class="stat-label">Diseases</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-body" id="chat-body">
+            <div class="message-container user-message">
+                <div class="message-bubble">
+                    What causes damping-off in seedlings?
+                    <span class="message-time">19:23</span>
+                </div>
+            </div>
+            
+            <div class="message-container bot-message">
+                <div class="message-bubble">
+                    Damping-off is caused by pre-emergence damping off and seed rotting, and post-emergence damping off. Pre-emergence damping off and seed rotting cause poor seedling stands. Post-emergence damping off infects seedlings near the soil line after emergence, causing them to become soft, water-soaked, and weak, leading to their death. The provided text specifically mentions Pythium spp. as a cause in cucurbits.
+                    <span class="message-time">19:23</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="suggested-text">Ask about crop diseases (e.g., What is damping-off?)</div>
+            <div class="input-box">
+                <input type="text" class="message-input" placeholder="Type your question..." autocomplete="off">
+                <button class="send-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('queryForm');
-            const input = document.getElementById('queryInput');
-            const chatContainer = document.getElementById('chatContainer');
-            const sourceList = document.getElementById('sourceList');
-            const sourcesSection = document.getElementById('sourcesSection');
-            const exampleTags = document.querySelectorAll('.example-tag');
+        $(document).ready(function() {
+            // Auto-scroll to bottom
+            function scrollToBottom() {
+                $('#chat-body').animate({ scrollTop: $('#chat-body')[0].scrollHeight }, 300);
+            }
             
-            // Example bot responses for demo purposes
-            const demoResponses = {
-                "What causes damping-off in seedlings?": {
-                    answer: "Damping-off is primarily caused by soil-borne fungi including Pythium, Phytophthora, Rhizoctonia, and Fusarium species. These pathogens thrive in cool, wet soil conditions and attack seedlings at or below the soil line, causing stem rot and collapse.",
-                    sources: [
-                        "Compendium of Vegetable Crops Diseases, Chapter: Tomato Diseases",
-                        "Section: Damping Off, Pages 4-6"
-                    ]
-                },
-                "How to identify and treat tomato late blight?": {
-                    answer: "Tomato late blight (caused by Phytophthora infestans) appears as pale green water-soaked spots on leaves that rapidly turn brown. Under humid conditions, a white fungal growth appears on leaf undersides. For management: 1) Apply protective fungicides like copper-based products, 2) Ensure proper plant spacing for air circulation, 3) Remove infected plants immediately, and 4) Avoid overhead irrigation.",
-                    sources: [
-                        "Compendium of Vegetable Crops Diseases, Tomato Section",
-                        "Late Blight Management, Pages 8-10"
-                    ]
-                },
-                "What are symptoms of bacterial wilt in brinjal?": {
-                    answer: "Bacterial wilt in brinjal (caused by Ralstonia solanacearum) symptoms include sudden wilting of plants, especially on hot days, brown discoloration of vascular tissue, and milky bacterial ooze from cut stems. The disease spreads through contaminated soil, water, and infected plant material.",
-                    sources: [
-                        "Compendium of Vegetable Crops Diseases, Brinjal Section",
-                        "Bacterial Wilt, Pages 32-34"
-                    ]
-                },
-                "Management techniques for chili anthracnose": {
-                    answer: "For chili anthracnose (caused by Colletotrichum spp.): 1) Use disease-free seeds treated with fungicides, 2) Apply foliar sprays of azoxystrobin or tebuconazole at flowering stage, 3) Practice crop rotation with non-solanaceous crops, 4) Remove infected plant debris, and 5) Avoid harvesting when plants are wet.",
-                    sources: [
-                        "Compendium of Vegetable Crops Diseases, Chilli Section",
-                        "Anthracnose Management, Pages 38-39"
-                    ]
-                }
-            };
-            
-            // Handle form submission
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const query = input.value.trim();
-                if (query) {
-                    addMessage(query, 'user');
-                    
-                    // Simulate bot response after delay
-                    setTimeout(() => {
-                        let response = "I'm still learning about this specific topic. Could you provide more details?";
-                        let sources = ["General Agricultural Knowledge"];
-                        
-                        // Check if we have a demo response
-                        for (const [key, value] of Object.entries(demoResponses)) {
-                            if (query.toLowerCase().includes(key.toLowerCase().substring(0, 20))) {
-                                response = value.answer;
-                                sources = value.sources;
-                                break;
-                            }
-                        }
-                        
-                        addMessage(response, 'bot');
-                        showSources(sources);
-                    }, 1000);
-                    
-                    input.value = '';
-                }
+            // Message form submission
+            $(".send-button").click(sendMessage);
+            $(".message-input").keypress(function(e) {
+                if (e.which == 13) sendMessage();
             });
             
-            // Example tag click handlers
-            exampleTags.forEach(tag => {
-                tag.addEventListener('click', function() {
-                    const query = this.getAttribute('data-query');
-                    input.value = query;
-                    form.dispatchEvent(new Event('submit'));
-                });
-            });
-            
-            // Add message to chat
-            function addMessage(text, sender) {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', `${sender}-message`);
-                messageDiv.innerHTML = `
-                    <div class="${sender}-icon"><i class="fas ${sender === 'bot' ? 'fa-robot' : 'fa-user'}"></i></div>
-                    ${text}
+            function sendMessage() {
+                const input = $(".message-input");
+                const rawText = input.val().trim();
+                
+                if (!rawText) return;
+                
+                const date = new Date();
+                const timeString = date.getHours().toString().padStart(2, '0') + ":" + 
+                                  date.getMinutes().toString().padStart(2, '0');
+                
+                // Add user message
+                const userMessage = `
+                    <div class="message-container user-message">
+                        <div class="message-bubble">
+                            ${rawText}
+                            <span class="message-time">${timeString}</span>
+                        </div>
+                    </div>
                 `;
-                chatContainer.appendChild(messageDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+                $('#chat-body').append(userMessage);
+                input.val('');
+                scrollToBottom();
+                
+                // Simulate bot response after delay
+                setTimeout(function() {
+                    const botResponse = `
+                        <div class="message-container bot-message">
+                            <div class="message-bubble">
+                                This is a simulated response to your question about "${rawText}". In a real implementation, this would be the actual answer from the AgriBot AI system.
+                                <span class="message-time">${timeString}</span>
+                            </div>
+                        </div>
+                    `;
+                    $('#chat-body').append(botResponse);
+                    scrollToBottom();
+                }, 1000);
             }
             
-            // Show sources
-            function showSources(sources) {
-                sourceList.innerHTML = '';
-                sources.forEach(source => {
-                    const sourceItem = document.createElement('div');
-                    sourceItem.classList.add('source-item');
-                    sourceItem.textContent = source;
-                    sourceList.appendChild(sourceItem);
-                });
-                sourcesSection.classList.add('visible');
-            }
+            // Initial scroll to bottom
+            scrollToBottom();
         });
     </script>
 </body>
